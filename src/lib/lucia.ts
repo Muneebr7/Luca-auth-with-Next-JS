@@ -17,25 +17,28 @@ export const lucia = new Lucia(adapter, {
 }) 
 
 export const getUser = async () => {
-    const sessionId = cookies().get(lucia.sessionCookieName)?.value ?? null
+    const sessionId = cookies().get(lucia.sessionCookieName)?.value || null
     if(!sessionId){
         return null
     }
-    // Validate the session with Lucia
+
     const { session , user } = await lucia.validateSession(sessionId)
 
     try {
-        if(session && session.fresh) {
-            // Generate the Fresh Session
-                const sessionCookie = await lucia.createSessionCookie(session.id)
-                cookies().set(sessionCookie.name, sessionCookie.value , sessionCookie.attributes)
-        }
-        if(!session){
-            const blankCookie = await lucia.createBlankSessionCookie()
-            cookies().set(blankCookie.name, blankCookie.value , blankCookie.attributes)
-        }
-    } catch (error) {
-        return {message : error , status : false}
+		if (session && session.fresh) {
+			const sessionCookie =  lucia.createSessionCookie(session.id);
+			cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+		}
+		if (!session) {
+			const sessionCookie =  lucia.createBlankSessionCookie();
+			cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+		}
+	} catch {
+		// Next.js throws error when attempting to set cookies when rendering page
+	}
+
+    if(!session){
+        return null
     }
 
     const dbUser = await prisma.user.findUnique({
@@ -47,7 +50,6 @@ export const getUser = async () => {
             email : true,
         }
     })
-
 
     return dbUser
 

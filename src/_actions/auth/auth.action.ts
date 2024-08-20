@@ -66,6 +66,15 @@ export const singInAction = async (values: z.infer<typeof singInSchema>) => {
       return { message: "Password incorrect", success: false };
     }
 
+    const checkSessions = await prisma.session.findMany({
+      where : {
+         userId : user.id
+      }
+    })
+
+    if(checkSessions.length > 2) {
+      return { message: "Maximum Sessions Limit Reached", success: false };
+    }
     // Success Login
     const session = await lucia.createSession(user.id, {});
     const sessionCookie = await lucia.createSessionCookie(session.id);
@@ -75,6 +84,8 @@ export const singInAction = async (values: z.infer<typeof singInSchema>) => {
       sessionCookie.attributes
     );
 
+
+
     return { message: "User Login Success Fully", success: true };
   } catch (error) {
     return { message: error, success: false };
@@ -83,11 +94,7 @@ export const singInAction = async (values: z.infer<typeof singInSchema>) => {
 
 export const logOutAction = async () => {
    const currentCookie = cookies().get(lucia.sessionCookieName)?.value
-   await prisma.session.delete({
-      where : {
-         id : currentCookie
-      }
-   })
+   await lucia.invalidateSession(currentCookie);
   const session = await lucia.createBlankSessionCookie();
   cookies().set(session.name, session.value, session.attributes);
   return redirect("/");

@@ -8,6 +8,7 @@ type Props = {};
 
 export default async function page({}: Props) {
   const user:any = await getUser();
+  console.log(user)
   if(!user){
     redirect('/')
   }
