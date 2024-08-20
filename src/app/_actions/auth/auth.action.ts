@@ -4,6 +4,8 @@ import { z }  from 'zod'
 import { singUpSchema } from '../../auth/SingUp';
 import { prisma } from '@/lib/prisma';
 import { Argon2id } from 'oslo/password'
+import { lucia } from '@/lib/lucia';
+import { cookies } from 'next/headers';
  
 export const singUp = async (values : z.infer<typeof singUpSchema>) => {
    try {
@@ -23,15 +25,19 @@ export const singUp = async (values : z.infer<typeof singUpSchema>) => {
       const user = await prisma.user.create({
          data  : {
             name : values.name,
-            email : values.email,
+            email : values.email.toLocaleLowerCase(),
             hashedPassword
          }
       })
 
-   
+      const session = await lucia.createSession(user.id, {})
+      const sessionCookie = await lucia.createSessionCookie(session.id)
+      cookies().set(sessionCookie.name, sessionCookie.value , sessionCookie.attributes)
+      
+      return { message : 'User created successfully', success : true }
 
    } catch (error) {
-      
+      return { message : error, success : false }
    }
 
 }

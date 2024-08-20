@@ -26,20 +26,21 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
+import toast from "react-hot-toast";
 
 export const singUpSchema = z
   .object({
     name: z.string().min(2).max(50),
-    email: z.string().email(),
+    email: z.string().email().toLowerCase(),
     password: z
       .string()
-      .min(8, { message: "Password Should be at least 8 characters" }),
-    confirmPassword: z.string().min(8),
-  }).refine((data) => data.password === data.confirmPassword, {
+      .min(3, { message: "Password Should be at least 3 characters" }),
+    confirmPassword: z.string().min(3),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
     message: "Password doesnt match",
     path: ["confirmPassword"],
   });
-  
 
 function SingUp() {
   const form = useForm<z.infer<typeof singUpSchema>>({
@@ -53,7 +54,12 @@ function SingUp() {
   });
 
   async function onSubmit(values: z.infer<typeof singUpSchema>) {
-        await singUp(values)
+    const res:any = await singUp(values);
+    if (res.success) {
+      toast.success(res.message);
+    } else {
+      toast.error(res.message)
+    }
   }
 
   return (
