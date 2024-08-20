@@ -1,5 +1,15 @@
 "use client";
 
+import { Input } from "@/components/ui/input";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import { singInAction } from "@/_actions/auth/auth.action";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { singInSchema } from "@/types/authSchema";
+
 import {
   Card,
   CardContent,
@@ -17,21 +27,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-import { Input } from "@/components/ui/input";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import { singInAction } from "@/_actions/auth/auth.action";
-import toast from "react-hot-toast";
 
 
-export const singInSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-});
 
-function SingIn() {
+
+ function SingIn() {
+  
+  const router = useRouter()
+ 
   const form = useForm<z.infer<typeof singInSchema>>({
     resolver: zodResolver(singInSchema),
     defaultValues: {
@@ -40,9 +43,12 @@ function SingIn() {
     },
   });
 
+ 
+  
   async function onSubmit(values: z.infer<typeof singInSchema>) {
     const res:any = await singInAction(values)
     if(res.success){
+      router.push('/admin')
       toast.success("User Login Success")
     }else{
       toast.error(res.message)

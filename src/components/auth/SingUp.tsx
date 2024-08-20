@@ -1,5 +1,16 @@
 "use client";
 
+import { singUpAction } from "@/_actions/auth/auth.action";
+import { useRouter } from "next/navigation";
+import { Input } from "@/components/ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import toast from "react-hot-toast";
+import { singUpSchema } from "@/types/authSchema";
+import { z } from "zod";
+
+
 import {
   Card,
   CardContent,
@@ -7,7 +18,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { singUpAction } from "@/_actions/auth/auth.action";
+
 
 import {
   Form,
@@ -19,30 +30,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-import { Input } from "@/components/ui/input";
-
-import { z } from "zod";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import toast from "react-hot-toast";
-
-export const singUpSchema = z
-  .object({
-    name: z.string().min(2).max(50),
-    email: z.string().email().toLowerCase(),
-    password: z
-      .string()
-      .min(3, { message: "Password Should be at least 3 characters" }),
-    confirmPassword: z.string().min(3),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Password doesnt match",
-    path: ["confirmPassword"],
-  });
 
 function SingUp() {
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof singUpSchema>>({
     resolver: zodResolver(singUpSchema),
     defaultValues: {
@@ -54,11 +45,12 @@ function SingUp() {
   });
 
   async function onSubmit(values: z.infer<typeof singUpSchema>) {
-    const res:any = await singUpAction(values);
+    const res: any = await singUpAction(values);
     if (res.success) {
+      router.push("/admin");
       toast.success(res.message);
     } else {
-      toast.error(res.message)
+      toast.error(res.message);
     }
   }
 
