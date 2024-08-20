@@ -17,11 +17,10 @@ export const lucia = new Lucia(adapter, {
 }) 
 
 export const getUser = async () => {
-    const sessionId = cookies().get(lucia.sessionCookieName)?.value || null
+    const sessionId = cookies().get(lucia.sessionCookieName)?.value ?? null
     if(!sessionId){
         return null
     }
-
     // Validate the session with Lucia
     const { session , user } = await lucia.validateSession(sessionId)
 
@@ -49,7 +48,9 @@ export const getUser = async () => {
         }
     })
 
+
     return dbUser
 
 
 }
+

@@ -82,6 +82,12 @@ export const singInAction = async (values: z.infer<typeof singInSchema>) => {
 };
 
 export const logOutAction = async () => {
+   const currentCookie = cookies().get(lucia.sessionCookieName)?.value
+   await prisma.session.delete({
+      where : {
+         id : currentCookie
+      }
+   })
   const session = await lucia.createBlankSessionCookie();
   cookies().set(session.name, session.value, session.attributes);
   return redirect("/");

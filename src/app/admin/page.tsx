@@ -8,12 +8,11 @@ type Props = {};
 
 export default async function page({}: Props) {
   const user:any = await getUser();
-
-  if (!user) {
-    return redirect("/");
+  if(!user){
+    redirect('/')
   }
-
-  return <div>You are Login As {user.name}
+  return <div>
+    <h1>You are login as {user.name}</h1>
     <div>
         <SingOutButton> Sing Out </SingOutButton>
     </div>
