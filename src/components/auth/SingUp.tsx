@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { singUp } from "../_actions/auth/auth.action";
+import { singUpAction } from "@/_actions/auth/auth.action";
 
 import {
   Form,
@@ -54,7 +54,7 @@ function SingUp() {
   });
 
   async function onSubmit(values: z.infer<typeof singUpSchema>) {
-    const res:any = await singUp(values);
+    const res:any = await singUpAction(values);
     if (res.success) {
       toast.success(res.message);
     } else {

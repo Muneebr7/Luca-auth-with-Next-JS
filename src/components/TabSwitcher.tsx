@@ -8,9 +8,9 @@ type Props = {
 const TabSwitcher = (props: Props) => {
   return (
     <Tabs className="max-w-[500px] w-[400px]" defaultValue="singIn">
-      <TabsList>
-        <TabsTrigger value="singIn"> Sign in </TabsTrigger>
-        <TabsTrigger value="singUp"> Sign Up </TabsTrigger>
+      <TabsList className="w-full">
+        <TabsTrigger value="singIn" className="w-1/2"> Sign in </TabsTrigger>
+        <TabsTrigger value="singUp" className="w-1/2"> Sign Up </TabsTrigger>
       </TabsList>
 
       <TabsContent value="singUp">{props.SingUpTab}</TabsContent>

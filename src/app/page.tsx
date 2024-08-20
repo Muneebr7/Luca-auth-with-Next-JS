@@ -1,6 +1,6 @@
 import TabSwitcher from "@/components/TabSwitcher";
-import SingIn from "./auth/SingIn";
-import SingUp from "./auth/SingUp";
+import SingIn from "../components/auth/SingIn";
+import SingUp from "../components/auth/SingUp";
 
 export default async function Home() {
   return (

@@ -18,12 +18,13 @@ import {
 } from "@/components/ui/form";
 
 import { Input } from "@/components/ui/input";
-
 import { z } from "zod";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
+import { singInAction } from "@/_actions/auth/auth.action";
+import toast from "react-hot-toast";
+
 
 export const singInSchema = z.object({
   email: z.string().email(),
@@ -39,8 +40,13 @@ function SingIn() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof singInSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof singInSchema>) {
+    const res:any = await singInAction(values)
+    if(res.success){
+      toast.success("User Login Success")
+    }else{
+      toast.error(res.message)
+    }
   }
 
   return (
